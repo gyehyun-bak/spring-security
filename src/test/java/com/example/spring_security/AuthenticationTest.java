@@ -36,16 +36,19 @@ public class AuthenticationTest {
         // then
         SecurityContext savedContext = SecurityContextHolder.getContext();
         Authentication savedAuthentication = savedContext.getAuthentication();
-        String username = savedAuthentication.getName();
+
+        assertThat(savedAuthentication.isAuthenticated()).isTrue();
+
+        String principalName = savedAuthentication.getName();
         Object principal = savedAuthentication.getPrincipal();
+        Object credentials = savedAuthentication.getCredentials();
         Collection<? extends GrantedAuthority> authorities = savedAuthentication.getAuthorities();
 
-        System.out.println("username = " + username);
-        System.out.println("principal = " + principal);
-        for (GrantedAuthority authority : authorities) {
-            System.out.println("authority = " + authority.getAuthority());
-        }
-        System.out.println("details = " + savedContext.getAuthentication().getDetails());
+        assertThat(principalName).isEqualTo("user");
+        assertThat(principal).isEqualTo("user");
+        assertThat(credentials).isEqualTo("password");
+        assertThat(authorities).hasSize(1);
+        assertThat(authorities.iterator().next().getAuthority()).isEqualTo("ROLE_USER");
     }
 
     @Test
